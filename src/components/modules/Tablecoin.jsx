@@ -3,7 +3,8 @@ import chartUp from "../../assets/chart-up.svg";
 import chartDown from "../../assets/chart-down.svg";
 import {RotatingLines} from "react-loader-spinner";
 import styles from "./TableCoin.module.css"
-function TableCoin({coins, isLoading, currency}) {
+function TableCoin({coins, isLoading, currency, setChart}) {
+    
   return (
     <div className={styles.container}>
         
@@ -21,7 +22,7 @@ function TableCoin({coins, isLoading, currency}) {
             </thead>
             <tbody>
                 {coins.map((coin) => (
-                    <TableRow coin = {coin} key={coin.id} currency={currency}/>
+                    <TableRow coin = {coin} key={coin.id} currency={currency} setChart={setChart}/>
                 ))}
             </tbody>
         </table>
@@ -35,22 +36,38 @@ export default TableCoin;
 
 
 const TableRow = ({
+    
     coin: {
+        id,
         name,
         image, 
         symbol,
         total_volume, 
         current_price,
         price_change_percentage_24h
-    },currency
+    },currency, setChart,
     
     
     }) =>{
-        
+        const BASE_URL = import.meta.env.VITE_BASE_URL;
+        const API_KEY = import.meta.env.VITE_API_KEY;
+        const marketChart = (coin) => `${BASE_URL}/coins/${coin}/market_chart?vs_currency=usd&days=7`;
+
+
+        const showHandler =async () =>{
+            try{
+                const res = await fetch(marketChart(id));
+                const json = await res.json();
+                console.log(json);
+                setChart(json)
+            }catch(error){
+                setChart(null)
+            }
+        }
     return (
         <tr >
             <td>
-                <div className={styles.symbol}>
+                <div className={styles.symbol} onClick={showHandler}>
                     <img src={image} alt="" />
                     <span>{symbol.toUpperCase()}</span>
                 </div>
