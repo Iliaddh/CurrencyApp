@@ -37,18 +37,19 @@ export default TableCoin;
 
 const TableRow = ({
     
-    coin: {
-        id,
-        name,
-        image, 
-        symbol,
-        total_volume, 
-        current_price,
-        price_change_percentage_24h
-    },currency, setChart,
+    coin,currency, setChart,
     
     
     }) =>{
+        const  {
+            id,
+            name,
+            image, 
+            symbol,
+            total_volume, 
+            current_price,
+            price_change_percentage_24h
+        } = coin;
         const BASE_URL = import.meta.env.VITE_BASE_URL;
         const API_KEY = import.meta.env.VITE_API_KEY;
         const marketChart = (coin) => `${BASE_URL}/coins/${coin}/market_chart?vs_currency=usd&days=7`;
@@ -58,7 +59,7 @@ const TableRow = ({
             try{
                 const res = await fetch(marketChart(id));
                 const json = await res.json();
-                setChart(json)
+                setChart({...json, coin:coin})
             }catch(error){
                 setChart(null)
             }
